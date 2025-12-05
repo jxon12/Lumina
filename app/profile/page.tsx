@@ -52,7 +52,7 @@ export default function ProfilePage() {
           </motion.div>
 
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-4xl font-bold mb-2">Tan Kenji</h1>
+            <h1 className="text-4xl font-bold mb-2">Alex Chen</h1>
             <p className="text-lg text-muted-foreground mb-4">Computer Science • Stanford University</p>
             <div className="flex flex-wrap gap-2 justify-center md:justify-start">
               <span className="px-4 py-2 rounded-xl glass-strong text-sm font-medium border border-primary/30 text-primary">
