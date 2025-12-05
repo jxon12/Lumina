@@ -148,11 +148,11 @@ export default function MentorsPage() {
           <div className="flex items-center gap-4">
             <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${activeMentor.gradient} p-[2px]`}>
               <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
-                 <span className="text-sm font-bold text-white">{activeMentor.avatar}</span>
+                 <span className="text-sm font-bold text-black">{activeMentor.avatar}</span>
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-white flex items-center gap-2">
+              <h3 className="font-bold text-black flex items-center gap-2">
                 {activeMentor.name}
                 <Sparkles className="w-3 h-3 text-yellow-400" />
               </h3>
