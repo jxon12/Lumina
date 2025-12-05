@@ -17,7 +17,7 @@ export interface UserState {
 
 // 2. 导出初始数据
 export const INITIAL_USER: UserState = {
-  name: "Alex Chen",
+  name: "Tan Kenji",
   xp: 12450,
   level: 12,
   activeQuests: [1]
