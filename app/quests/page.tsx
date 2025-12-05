@@ -1,7 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy } from 'lucide-react';
+import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy, CheckCircle2 } from 'lucide-react';
+// 🟢 Import Context
+import { useGlobalState } from '@/context/GlobalState';
+import { toast } from 'sonner';
 
 const difficulties = {
   easy: { color: 'from-green-500 to-emerald-500', text: 'text-green-400', border: 'border-green-500/30' },
@@ -9,6 +12,7 @@ const difficulties = {
   hard: { color: 'from-red-500 to-pink-500', text: 'text-red-400', border: 'border-red-500/30' },
 };
 
+// 确保这里的 ID 与你的 context/mock DB 一致
 const quests = [
   {
     id: 1,
@@ -87,6 +91,16 @@ const quests = [
 const filters = ['All', 'AI/ML', 'Data Science', 'Web3', 'Quantum', 'Biotech'];
 
 export default function QuestsPage() {
+  // 🟢 获取全局状态
+  const { user, joinQuest } = useGlobalState();
+
+  const handleJoin = (questId: number, xp: number) => {
+    joinQuest(questId);
+    toast.success("Quest Accepted!", {
+      description: `You've joined the quest. Complete it to earn ${xp} XP.`
+    });
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -116,7 +130,7 @@ export default function QuestsPage() {
           <div className="flex items-center gap-3">
             <Trophy className="w-5 h-5 text-accent" />
             <div>
-              <p className="text-2xl font-bold">6</p>
+              <p className="text-2xl font-bold">{quests.length}</p>
               <p className="text-xs text-muted-foreground">Quests Available</p>
             </div>
           </div>
@@ -150,6 +164,9 @@ export default function QuestsPage() {
           const Icon = quest.icon;
           const difficultyStyle = difficulties[quest.difficulty as keyof typeof difficulties];
           const progress = (quest.participants.current / quest.participants.max) * 100;
+          
+          // 🟢 检查是否已参加
+          const isJoined = user.activeQuests.includes(quest.id);
 
           return (
             <motion.div
@@ -158,7 +175,7 @@ export default function QuestsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.02, y: -4 }}
-              className="glass rounded-2xl p-6 relative overflow-hidden group cursor-pointer"
+              className={`glass rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-colors ${isJoined ? 'border-primary/50 bg-primary/5' : ''}`}
             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <div className={`absolute inset-0 bg-gradient-to-br ${difficultyStyle.color} opacity-10`} />
@@ -207,7 +224,7 @@ export default function QuestsPage() {
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <Users className="w-4 h-4" />
                       <span>
-                        {quest.participants.current}/{quest.participants.max} Students
+                        {isJoined ? quest.participants.current + 1 : quest.participants.current}/{quest.participants.max} Students
                       </span>
                     </div>
                     <span className="text-muted-foreground">{quest.timeEstimate}</span>
@@ -217,24 +234,41 @@ export default function QuestsPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <span>Team Progress</span>
-                    <span>{quest.participants.current}/{quest.participants.max}</span>
+                    <span>{isJoined ? 'Joined' : `${quest.participants.current}/${quest.participants.max}`}</span>
                   </div>
                   <div className="h-2 bg-white/5 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${progress}%` }}
+                      animate={{ width: isJoined ? '10%' : `${progress}%` }}
                       transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
                       className={`h-full bg-gradient-to-r ${difficultyStyle.color}`}
                     />
                   </div>
                 </div>
 
+                {/* 🟢 交互按钮 */}
                 <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full mt-4 py-3 rounded-xl bg-gradient-to-r ${difficultyStyle.color} text-white font-semibold shadow-lg`}
+                  whileHover={!isJoined ? { scale: 1.02 } : {}}
+                  whileTap={!isJoined ? { scale: 0.98 } : {}}
+                  onClick={(e) => {
+                    e.stopPropagation(); // 防止触发卡片点击（如果有的话）
+                    if (!isJoined) handleJoin(quest.id, quest.xp);
+                  }}
+                  disabled={isJoined}
+                  className={`w-full mt-4 py-3 rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2 ${
+                    isJoined 
+                      ? 'bg-slate-800 text-slate-400 cursor-default border border-white/5' 
+                      : `bg-gradient-to-r ${difficultyStyle.color} text-white`
+                  }`}
                 >
-                  {quest.participants.current === 0 ? 'Start Quest' : 'Join Quest'}
+                  {isJoined ? (
+                    <>
+                      <CheckCircle2 className="w-4 h-4" />
+                      Active Quest
+                    </>
+                  ) : (
+                    'Join Quest'
+                  )}
                 </motion.button>
               </div>
             </motion.div>
