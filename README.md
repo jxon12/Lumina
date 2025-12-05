@@ -1,3 +1,6 @@
+**GROUP: 67generation**
+
+Problem Statement 2: University STEM Mentorship & Collaboration Porta
 Lumina - Academic & Innovation Collaboration Ecosystem
 
 Lumina is a decentralized platform designed to help students find mentors, research partners, and collaborate efficiently. By integrating psychological principles with gamified design, Lumina aims to lower social barriers and boost academic engagement.
