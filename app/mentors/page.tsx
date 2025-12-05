@@ -1,163 +1,247 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Search, MessageCircle, Video, Star, MoreHorizontal, Sparkles, Zap } from 'lucide-react';
-// 🟢 1. 引入 Context
-import { useGlobalState } from '@/context/GlobalState';
+import { Users, Video, Phone, MoreVertical, Send, Paperclip, Code, Smile, Sparkles, Cpu } from 'lucide-react';
+import { useState } from 'react';
 
-// 预设的“老”导师数据（用来填充页面，不显得空）
-const PRESET_MENTORS = [
+// ... (保持你原有的 messages 和 contacts 数据不变) ...
+const messages = [
+  // ... Keep your mock data here ...
   {
-    id: 'm1',
-    name: 'Dr. Emily Watson',
-    role: 'Prof. of Bio-Informatics',
-    avatar: 'https://i.pravatar.cc/300?u=emily',
-    status: 'Online',
-    tags: ['Genomics', 'Python', 'R'],
-    bio: 'Looking for students interested in gene editing research.'
+    id: 1,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Hey Alex! I saw your question about neural network optimization. Happy to help!',
+    time: '10:32 AM',
+    gradient: 'from-purple-500 to-pink-500',
   },
   {
-    id: 'm2',
-    name: 'Michael Chang',
-    role: 'PhD Student · Quantum Lab',
-    avatar: 'https://i.pravatar.cc/300?u=michael',
-    status: 'Busy',
-    tags: ['Quantum Physics', 'Qiskit', 'Linear Algebra'],
-    bio: 'Can help with quantum algorithms and circuit design.'
-  }
+    id: 2,
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'Thank you so much! I\'m struggling with the learning rate decay strategy. My model keeps overshooting the optimal point.',
+    time: '10:35 AM',
+    gradient: 'from-primary to-secondary',
+  },
+  {
+    id: 3,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Classic issue! Have you tried implementing a cosine annealing schedule? It works really well for this.',
+    time: '10:37 AM',
+    gradient: 'from-purple-500 to-pink-500',
+  },
+  {
+    id: 4,
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'Not yet! Could you share an example?',
+    time: '10:38 AM',
+    gradient: 'from-primary to-secondary',
+  },
+  {
+    id: 5,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Absolutely! Here\'s a quick implementation:',
+    time: '10:40 AM',
+    gradient: 'from-purple-500 to-pink-500',
+    isCode: true,
+    code: `import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
+
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+scheduler = CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
+
+# In your training loop:
+for epoch in range(num_epochs):
+    train(...)
+    scheduler.step()`,
+  },
+  {
+    id: 6,
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'This is perfect! The T_max parameter - is that the total number of epochs?',
+    time: '10:42 AM',
+    gradient: 'from-primary to-secondary',
+  },
+  {
+    id: 7,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Exactly! T_max is the number of iterations for the cosine cycle. You can set it to your total epochs, or make it shorter for multiple cycles.',
+    time: '10:43 AM',
+    gradient: 'from-purple-500 to-pink-500',
+  },
 ];
 
-// 🟢 刚刚匹配到的 Sarah 的详细数据
-const SARAH_DATA = {
-  id: 'mentor-sarah',
-  name: 'Dr. Sarah Chen',
-  role: 'AI Researcher · Stanford Lab',
-  avatar: 'https://i.pravatar.cc/300?u=sarah_chen_ai_lab', // 和匹配弹窗里的一样
-  status: 'Online',
-  tags: ['NLP', 'Transformers', 'Python'],
-  bio: 'Specialized in Large Language Models. Also loves Sci-Fi!',
-  isNew: true // 标记为新连接
-};
+const mentorContacts = [
+  { id: 1, name: 'Dr. Sarah Chen', status: 'online', avatar: 'SC', field: 'AI/ML', gradient: 'from-purple-500 to-pink-500' },
+  { id: 2, name: 'Prof. James Wilson', status: 'away', avatar: 'JW', field: 'Quantum', gradient: 'from-blue-500 to-cyan-500' },
+  { id: 3, name: 'Dr. Maya Patel', status: 'offline', avatar: 'MP', field: 'Biotech', gradient: 'from-green-500 to-emerald-500' },
+  { id: 4, name: 'Dr. Carlos Rodriguez', status: 'online', avatar: 'CR', field: 'Web3', gradient: 'from-orange-500 to-red-500' },
+];
 
 export default function MentorsPage() {
-  // 🟢 2. 从全局状态获取“我的导师ID列表”
-  const { user } = useGlobalState();
-
-  // 🟢 3. 动态构建显示列表
-  // 如果 user.mentors 包含 'mentor-sarah'，就把 Sarah 加到列表最前面
-  const displayMentors = [
-    ...(user.mentors.includes('mentor-sarah') ? [SARAH_DATA] : []),
-    ...PRESET_MENTORS
-  ];
+  const [message, setMessage] = useState('');
+  const activeMentor = mentorContacts[0];
 
   return (
-    <div className="space-y-8">
-      {/* 头部区域 */}
-      <div className="flex flex-col md:flex-row justify-between items-end gap-4">
-        <div>
-          <h1 className="text-4xl font-bold mb-2 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center neon-glow">
-              <Star className="w-6 h-6 text-white" />
-            </div>
-            Your Navigators
-          </h1>
-          <p className="text-slate-400 text-lg">
-            Connect with mentors and peers who share your wavelength.
-          </p>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="h-[calc(100vh-8rem)] flex gap-6"
+    >
+      {/* 🔴 左侧列表：增加悬浮卡片效果 */}
+      <div className="w-80 hidden lg:flex flex-col gap-4">
+        <div className="glass rounded-2xl p-6 border-l-4 border-purple-500">
+          <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+            <Cpu className="w-5 h-5 text-purple-400" />
+            Active Links
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">Encrypted • Low Latency</p>
         </div>
-        
-        {/* 搜索栏 */}
-        <div className="relative w-full md:w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="Search by skill or name..."
-            className="w-full bg-slate-900/50 border border-white/10 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-purple-500 transition-colors"
-          />
+
+        <div className="flex-1 glass rounded-2xl p-2 space-y-1 overflow-y-auto">
+          {mentorContacts.map((mentor, index) => (
+            <motion.div
+              key={mentor.id}
+              whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.05)' }}
+              className={`p-3 rounded-xl cursor-pointer transition-all border border-transparent ${
+                index === 0 ? 'bg-white/5 border-white/10 shadow-inner' : ''
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${mentor.gradient} flex items-center justify-center text-xs font-bold text-white shadow-lg`}>
+                    {mentor.avatar}
+                  </div>
+                  <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
+                    mentor.status === 'online' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-500'
+                  }`} />
+                </div>
+                <div>
+                  <p className={`text-sm font-semibold ${index === 0 ? 'text-white' : 'text-slate-300'}`}>{mentor.name}</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider">{mentor.field}</p>
+                </div>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
 
-      {/* 导师列表 Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {displayMentors.map((mentor, index) => (
-          <motion.div
-            key={mentor.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`
-              glass rounded-2xl p-6 relative group border transition-all hover:border-purple-500/30
-              ${mentor.isNew ? 'border-green-500/50 bg-green-500/5 shadow-[0_0_30px_-10px_rgba(34,197,94,0.3)]' : 'border-white/5'}
-            `}
-          >
-            {/* 🟢 新连接的高亮标签 */}
-            {mentor.isNew && (
-              <div className="absolute top-4 right-4 px-2 py-1 bg-green-500/20 text-green-400 text-xs font-bold rounded-lg border border-green-500/30 flex items-center gap-1 animate-pulse">
-                <Sparkles className="w-3 h-3" />
-                NEW SPARK
-              </div>
-            )}
-
-            <div className="flex items-start gap-4 mb-4">
-              <div className="relative">
-                <img 
-                  src={mentor.avatar} 
-                  alt={mentor.name} 
-                  className="w-16 h-16 rounded-2xl object-cover border-2 border-white/10" 
-                />
-                <div className={`
-                  absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-slate-900
-                  ${mentor.status === 'Online' ? 'bg-green-500' : 'bg-yellow-500'}
-                `} />
-              </div>
-              <div>
-                <h3 className="font-bold text-lg text-white leading-tight">{mentor.name}</h3>
-                <p className="text-sm text-purple-400 mb-1">{mentor.role}</p>
-                <span className="text-xs text-slate-500">{mentor.status}</span>
-              </div>
-            </div>
-
-            <p className="text-sm text-slate-300 mb-6 line-clamp-2 h-10">
-              {mentor.bio}
-            </p>
-
-            <div className="flex flex-wrap gap-2 mb-6">
-              {mentor.tags.map(tag => (
-                <span key={tag} className="px-2 py-1 rounded-md bg-slate-800 text-xs text-slate-400 border border-white/5">
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-sm font-medium transition-colors">
-                <MessageCircle className="w-4 h-4" />
-                Chat
-              </button>
-              <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 text-sm font-medium transition-colors">
-                <Video className="w-4 h-4" />
-                Meet
-              </button>
-            </div>
-          </motion.div>
-        ))}
+      {/* 🔴 右侧聊天区：HUD 风格 */}
+      <div className="flex-1 glass-strong rounded-3xl flex flex-col overflow-hidden border border-white/10 relative">
+        {/* 顶部装饰线 */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
         
-        {/* 一个“添加更多”的占位卡片，增加社区感 */}
-        <motion.div
-           initial={{ opacity: 0 }}
-           animate={{ opacity: 1 }}
-           transition={{ delay: 0.4 }}
-           className="border-2 border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center text-center gap-4 hover:border-purple-500/30 hover:bg-white/5 transition-all cursor-pointer group"
-        >
-          <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center group-hover:scale-110 transition-transform">
-             <Zap className="w-5 h-5 text-slate-400" />
+        {/* Header */}
+        <div className="p-4 border-b border-white/5 flex justify-between items-center bg-slate-900/20">
+          <div className="flex items-center gap-4">
+            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${activeMentor.gradient} p-[2px]`}>
+              <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                 <span className="text-sm font-bold text-white">{activeMentor.avatar}</span>
+              </div>
+            </div>
+            <div>
+              <h3 className="font-bold text-white flex items-center gap-2">
+                {activeMentor.name}
+                <Sparkles className="w-3 h-3 text-yellow-400" />
+              </h3>
+              <p className="text-xs text-purple-300 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                Secure Connection Established
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="font-medium text-slate-300">Discover More</h3>
-            <p className="text-sm text-slate-500">Ignite a spark to find more mentors</p>
+          <div className="flex gap-2 text-slate-400">
+            <Video className="w-5 h-5 hover:text-white cursor-pointer transition-colors" />
+            <MoreVertical className="w-5 h-5 hover:text-white cursor-pointer transition-colors" />
           </div>
-        </motion.div>
+        </div>
+
+        {/* 消息区域 */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {messages.map((msg, index) => {
+            const isUser = msg.sender === 'user';
+            return (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className={`flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}
+              >
+                {!isUser && (
+                   <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${msg.gradient} flex items-center justify-center text-xs text-white shadow-lg`}>
+                     {msg.avatar}
+                   </div>
+                )}
+                
+                <div className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                  <div className={`
+                    p-4 rounded-2xl backdrop-blur-md border 
+                    ${isUser 
+                      ? 'bg-purple-500/20 border-purple-500/30 text-purple-50 rounded-tr-sm' 
+                      : 'bg-slate-800/40 border-white/10 text-slate-200 rounded-tl-sm'
+                    }
+                  `}>
+                    {msg.isCode ? (
+                      <div className="space-y-2">
+                        <p className="text-sm opacity-90">{msg.content}</p>
+                        {/* 代码块美化 */}
+                        <div className="bg-slate-950/80 rounded-lg p-3 border border-slate-800 font-mono text-xs overflow-x-auto shadow-inner">
+                          <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
+                            <span className="text-slate-500 flex items-center gap-1"><Code className="w-3 h-3" /> PYTHON</span>
+                            <div className="flex gap-1">
+                              <div className="w-2 h-2 rounded-full bg-red-500/40" />
+                              <div className="w-2 h-2 rounded-full bg-yellow-500/40" />
+                              <div className="w-2 h-2 rounded-full bg-green-500/40" />
+                            </div>
+                          </div>
+                          <code className="text-green-400 block">{msg.code}</code>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-slate-500 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {msg.time}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+
+        {/* 输入框 */}
+        <div className="p-4 bg-slate-900/30 border-t border-white/5 backdrop-blur-lg">
+          <div className="flex items-center gap-3 bg-slate-800/50 p-2 rounded-xl border border-white/5 focus-within:border-purple-500/50 transition-colors">
+             <button className="p-2 hover:bg-white/5 rounded-lg text-slate-400 transition-colors">
+               <Paperclip className="w-5 h-5" />
+             </button>
+             <input 
+               type="text" 
+               placeholder="Transmit data..." 
+               className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-slate-600"
+               value={message}
+               onChange={(e) => setMessage(e.target.value)}
+             />
+             <button className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg shadow-lg shadow-purple-900/20 transition-all active:scale-95">
+               <Send className="w-4 h-4" />
+             </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
