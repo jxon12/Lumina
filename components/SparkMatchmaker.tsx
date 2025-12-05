@@ -210,9 +210,14 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
 
                     <div className="glass-strong rounded-2xl p-6 mb-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold text-white flex-shrink-0">
-                          SC
-                        </div>
+                        <div className="relative">
+  <img 
+    src="https://i.pravatar.cc/300?u=sarah_chen_ai_lab" 
+    alt="Dr. Sarah Chen" 
+    className="w-20 h-20 rounded-2xl object-cover border-2 border-white/20 shadow-lg"
+  />
+  <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-4 border-slate-900 rounded-full"></div>
+</div>
                         <div className="flex-1">
                           <h4 className="text-xl font-bold mb-1">Dr. Sarah Chen</h4>
                           <p className="text-sm text-muted-foreground mb-3">PhD in {topic} • Stanford AI Lab</p>
