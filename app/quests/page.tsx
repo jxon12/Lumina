@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy, CheckCircle2, Plus, X, Clock, Shield, AlertCircle } from 'lucide-react';
+import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy, CheckCircle2, Plus, X, Clock, Shield, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { useGlobalState } from '@/context/GlobalState';
 import { toast } from 'sonner';
 
