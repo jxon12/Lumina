@@ -156,7 +156,7 @@ export default function MentorsPage() {
                 {activeMentor.name}
                 <Sparkles className="w-3 h-3 text-yellow-400" />
               </h3>
-              <p className="text-xs text-purple-300 flex items-center gap-1">
+              <p className="text-xs text-white-300 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                 Secure Connection Established
               </p>
