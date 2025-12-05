@@ -4,86 +4,125 @@
 
 @layer base {
   :root {
-    /* ☀️ Light Mode: 陶瓷白 + 极简灰 */
-    --background: 210 40% 98%; /* 极淡的灰白 */
-    --foreground: 222 47% 11%; /* 深蓝黑文字 */
-    
+    /* ☀️ Light Mode: 铂金灰 (Platinum) 风格 */
+    /* 背景不是纯白，而是带有微弱蓝调的淡灰，护眼且高级 */
+    --background: 210 40% 96.1%; /* #f1f5f9 (Slate-100) */
+    --foreground: 222 47% 11%;     /* 深蓝黑文字，比纯黑更柔和 */
+
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
-    
+ 
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    
-    --primary: 262 83% 58%; /* 鲜亮的紫色 */
+ 
+    --primary: 262 83% 58%;
     --primary-foreground: 210 40% 98%;
-    
-    --secondary: 210 40% 96.1%;
+ 
+    --secondary: 210 40% 90%;      /* 稍微深一点的灰，用于次级按钮 */
     --secondary-foreground: 222 47% 11%;
-    
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    
-    --accent: 210 40% 96.1%;
+ 
+    --muted: 210 40% 90%;
+    --muted-foreground: 215.4 16.3% 40%;
+ 
+    --accent: 0 0% 100%;           /* Hover 时变成纯白高亮 */
     --accent-foreground: 222 47% 11%;
-    
+ 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
+    --border: 214.3 31.8% 88%;     /* 边框稍微明显一点，增加精致感 */
     --input: 214.3 31.8% 91.4%;
     --ring: 262 83% 58%;
-
-    --radius: 1.5rem; /* 更圆润的角 */
+ 
+    --radius: 1.5rem;
   }
-
+ 
   .dark {
-    /* 🌙 Dark Mode: 黑曜石 + 极光 */
+    /* 🌙 Dark Mode: 保持之前的深空黑 */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
-    
+ 
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
-    
+ 
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
-    
-    --primary: 263 70% 50%; /* 深邃紫 */
+ 
+    --primary: 263 70% 50%;
     --primary-foreground: 210 40% 98%;
-    
+ 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
-    
+ 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    
+ 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
-    
+ 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
-    
+ 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 263 70% 50%;
   }
 }
-
+ 
 @layer base {
   * {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground transition-colors duration-500; /* 全局颜色过渡动画 */
+    @apply bg-background text-foreground antialiased transition-colors duration-500;
   }
 }
 
 @layer components {
-  /* 🌟 通用玻璃卡片 (自动适配亮/暗) */
-  .glass-card {
-    @apply bg-background/60 backdrop-blur-xl border border-border shadow-sm transition-all duration-300;
+  /* 🌟 智能卡片系统 
+     Light Mode: 像是在灰背景上放了一块白玉，有柔和的投影。
+     Dark Mode: 像是在黑夜里的磨砂玻璃。
+  */
+  .bento-card {
+    @apply relative overflow-hidden rounded-[2rem] border transition-all duration-500;
+  }
+
+  /* ☀️ Light Mode 具体样式 */
+  :root .bento-card {
+    background: rgba(255, 255, 255, 0.65); /* 稍微透明的白 */
+    border-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(12px) saturate(180%); /* 高级模糊 */
+    box-shadow: 
+      0 4px 6px -1px rgba(0, 0, 0, 0.02), 
+      0 2px 4px -1px rgba(0, 0, 0, 0.02),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5); /* 内部高光，像陶瓷釉面 */
+  }
+  :root .bento-card:hover {
+    background: rgba(255, 255, 255, 0.85);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); /* 悬浮时的阴影很淡 */
+  }
+
+  /* 🌙 Dark Mode 覆盖样式 */
+  .dark .bento-card {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  }
+  .dark .bento-card:hover {
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.4);
+  }
+
+  /* 标题适配 */
+  .text-title {
+    @apply font-semibold tracking-tight transition-colors;
+    color: var(--foreground); /* 自动适配深浅色 */
   }
   
-  .glass-card:hover {
-    @apply bg-background/80 shadow-md transform -translate-y-[2px];
+  /* 正文适配 */
+  .text-body {
+    @apply font-medium transition-colors;
+    color: var(--muted-foreground);
   }
 }
