@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Radar, Heart, RotateCcw, MessageCircle } from 'lucide-react';
-// 🟢 Import Context
+// 🟢 1. 引入 Context
 import { useGlobalState } from '@/context/GlobalState';
-import { toast } from 'sonner'; // 假设你装了 sonner，或者用 alert 代替
+import { toast } from 'sonner';
 
 interface SparkMatchmakerProps {
   isOpen: boolean;
@@ -15,7 +15,7 @@ interface SparkMatchmakerProps {
 const topics = ['AI/ML', 'Biotechnology', 'Web3/Blockchain', 'Quantum Computing', 'Robotics', 'Data Science'];
 const durations = ['15 mins', '30 mins', '45 mins', '1 hour'];
 
-// 模拟的导师数据 ID
+// 模拟的导师数据 ID (对应 Context 里的逻辑)
 const MATCHED_MENTOR_ID = 'mentor-sarah';
 
 export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProps) {
@@ -24,7 +24,7 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
   const [problem, setProblem] = useState('');
   const [duration, setDuration] = useState('15 mins');
   
-  // 🟢 获取操作方法
+  // 🟢 2. 获取 addMentor 方法
   const { addMentor } = useGlobalState();
 
   const handleSubmit = () => {
@@ -33,7 +33,7 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
   };
 
   const handleConnect = () => {
-    // 🟢 核心逻辑：添加导师关系
+    // 🟢 3. 核心逻辑：添加导师关系
     addMentor(MATCHED_MENTOR_ID);
     
     // 给个反馈
@@ -75,7 +75,8 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl z-50 px-4"
+            // 🟢 4. 位置修复：从 top-1/2 改为 top-[40%]，让弹窗视觉上移
+            className="fixed left-1/2 top-[40%] -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl z-50 px-4"
           >
             <div className="glass-strong rounded-3xl p-8 relative overflow-hidden border border-white/10 shadow-2xl">
               {/* 背景流光 */}
@@ -111,6 +112,10 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
                       <div className="space-y-6 text-lg font-medium text-slate-300">
                         <div className="flex flex-wrap items-center gap-2">
                           <span>I am exploring</span>
+                          {/* 🟢 CSS Fix: 强制 option 黑底，防止原生白色菜单 */}
+                          <style jsx>{`
+                            select option { background-color: #0f172a; color: white; }
+                          `}</style>
                           <select
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
@@ -216,7 +221,7 @@ export default function SparkMatchmaker({ isOpen, onClose }: SparkMatchmakerProp
                       <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
                       
                       <div className="relative flex items-start gap-5">
-                        {/* 🟢 AVATAR UPDATE */}
+                        {/* 🟢 5. Avatar 修复：使用真实头像 */}
                         <div className="relative">
                           <img 
                             src="https://i.pravatar.cc/300?u=sarah_chen_ai_lab" 
