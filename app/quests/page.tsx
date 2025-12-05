@@ -285,7 +285,6 @@ export default function QuestsPage() {
                     <>
                       Join Quest
                       <ArrowUpRight className="w-4 h-4 opacity-50" />
-                      ^
                     </>
                   )}
                 </button>
