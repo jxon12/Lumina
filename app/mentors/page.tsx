@@ -121,7 +121,7 @@ export default function MentorsPage() {
             >
               <div className="flex items-center gap-3">
                 <div className="relative">
-                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${mentor.gradient} flex items-center justify-center text-xs font-bold text-white shadow-lg`}>
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${mentor.gradient} flex items-center justify-center text-xs font-bold text-black shadow-lg`}>
                     {mentor.avatar}
                   </div>
                   <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
