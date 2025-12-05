@@ -42,6 +42,10 @@ Theme: next-themes - Perfect support for system-level dark/light mode toggling.
 
 🚀 Getting Started
 
+To get started with this project, you can simply click the button below to use this template:
+
+Alternatively, you can clone the repository and run it locally:
+
 Clone the repository
 
 git clone [https://github.com/your-username/lumina.git](https://github.com/your-username/lumina.git)
@@ -74,3 +78,19 @@ Light Mode: Platinum Grey background + Ceramic White cards + Deep Slate text.
 Dark Mode: Deep Space Black background + Frosted Black cards + Aurora fluid lighting effects.
 
 Typography: Uses the Inter font family, emphasizing tracking-tight for a modern look.
+
+🤝 Contributing
+
+We welcome Pull Requests to improve Lumina!
+
+Fork the repository.
+
+Create your Feature Branch (git checkout -b feature/AmazingFeature).
+
+Commit your changes (git commit -m 'Add some AmazingFeature').
+
+Push to the branch (git push origin feature/AmazingFeature).
+
+Open a Pull Request.
+
+Lumina - Connect. Collaborate. Innovate.
