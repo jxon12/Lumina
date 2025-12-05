@@ -174,8 +174,8 @@ export default function QuestsPage() {
             whileTap={{ scale: 0.95 }}
             className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
               index === 0
-                ? 'bg-primary text-white shadow-primary/25' // 🔴 修复：Active 状态使用紫色底白字
-                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground border border-transparent hover:border-border' // 🔴 修复：Inactive 状态适配深浅
+                ? 'bg-primary text-white shadow-primary/25' // Active 状态保持紫色底白字
+                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground border border-transparent hover:border-border' // Inactive 状态适配深浅
             }`}
           >
             {filter}
@@ -200,7 +200,7 @@ export default function QuestsPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
               whileHover={{ scale: 1.01, y: -2 }}
-              // 🔴 升级：使用 bento-card 类
+              // 升级：使用 bento-card 类
               className={`bento-card p-6 flex flex-col justify-between group ${isJoined ? 'border-primary/50 ring-1 ring-primary/20 bg-primary/5' : ''}`}
             >
               <div>
@@ -210,7 +210,7 @@ export default function QuestsPage() {
                     <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${style.bg} ${style.text} ${style.border}`}>
                       {style.label}
                     </span>
-                    {/* 🔴 修复：XP Badge 颜色 */}
+                    {/* 修复 XP Badge 颜色：使用 amber-600/400 适配深浅 */}
                     <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       +{quest.xp} XP
@@ -263,7 +263,7 @@ export default function QuestsPage() {
                   />
                 </div>
 
-                {/* 🔴 交互按钮 */}
+                {/* 交互按钮 */}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
