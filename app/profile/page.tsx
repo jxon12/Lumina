@@ -1,7 +1,8 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { User, Mail, MapPin, Link as LinkIcon, Award, BookOpen, Star, Github, Linkedin, Globe, Edit3, Settings } from 'lucide-react';
+// 🟢 1. 在这里直接引入 Zap 图标
+import { User, Mail, MapPin, Link as LinkIcon, Award, BookOpen, Star, Github, Linkedin, Globe, Edit3, Settings, Zap } from 'lucide-react';
 import { useGlobalState } from '@/context/GlobalState';
 
 export default function ProfilePage() {
@@ -14,14 +15,14 @@ export default function ProfilePage() {
     { name: 'Data Visualization', level: 'Advanced', color: 'bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20' },
   ];
 
+  // 🟢 2. 现在这里的 Zap 引用的是顶部 import 的图标，不会报错了
   const badges = [
     { name: 'Early Adopter', icon: Star, color: 'text-yellow-500' },
     { name: 'Quest Master', icon: Award, color: 'text-purple-500' },
-    { name: 'Top Contributor', icon: Zap, color: 'text-orange-500' }, // 这里的 Zap 需引入，或者换成其他
+    { name: 'Top Contributor', icon: Zap, color: 'text-orange-500' },
   ];
   
-  // 临时补充 Zap 图标引入
-  const Zap = Star; // 既然上面没引入 Zap，先用 Star 替代或者去 import 加上
+  // 🔴 3. 删除了之前那个临时的 const Zap = Star;
 
   return (
     <div className="space-y-8 max-w-5xl mx-auto">
@@ -55,7 +56,7 @@ export default function ProfilePage() {
           {/* Info */}
           <div className="flex-1 text-center md:text-left space-y-4">
             <div>
-              {/* 🔴 修复：文字颜色改为 text-foreground 和 text-muted-foreground */}
+              {/* 修复：文字颜色改为 text-foreground 和 text-muted-foreground */}
               <h1 className="text-4xl font-bold text-foreground mb-1 tracking-tight">{user.name}</h1>
               <p className="text-lg text-muted-foreground font-medium">Computer Science • Stanford University</p>
             </div>
