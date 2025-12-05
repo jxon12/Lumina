@@ -6,75 +6,81 @@
   :root {
     --background: 222 47% 5%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
     --primary: 271 91% 65%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217 91% 60%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
     --accent: 180 62% 55%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 271 91% 65%;
-    --radius: 0.75rem;
-
+    
+    /* 定义更细腻的霓虹色变量 */
     --neon-purple: 271 91% 65%;
     --electric-blue: 217 91% 60%;
     --teal: 180 62% 55%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border;
+  /* 1. 隐藏默认滚动条，使用极简风格 */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* 2. 选中文本变成霓虹紫，极客感拉满 */
+  ::selection {
+    background: hsl(var(--neon-purple) / 0.3);
+    color: white;
   }
 
   body {
-    @apply bg-slate-950 text-foreground;
-    background: linear-gradient(135deg,
-      hsl(222, 47%, 5%) 0%,
-      hsl(250, 50%, 8%) 50%,
-      hsl(222, 47%, 5%) 100%
-    );
-    min-height: 100vh;
+    @apply bg-slate-950 text-foreground overflow-x-hidden;
+    /* 增加噪点纹理 (Noise Texture) 让深色背景不单调 */
+    background-image: 
+      radial-gradient(circle at 15% 50%, hsl(271 91% 65% / 0.08), transparent 25%),
+      radial-gradient(circle at 85% 30%, hsl(180 62% 55% / 0.08), transparent 25%);
   }
 }
 
 @layer components {
+  /* 3. 升级版毛玻璃：加入 inset shadow 模拟玻璃厚度 */
   .glass {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl;
+    @apply bg-slate-900/40 backdrop-blur-xl border border-white/10 shadow-xl;
+    box-shadow: 
+      0 4px 30px rgba(0, 0, 0, 0.1),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* 内部高光 */
   }
 
   .glass-strong {
-    @apply bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl;
+    @apply bg-slate-900/60 backdrop-blur-2xl border border-white/10 shadow-2xl;
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.3),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
 
+  /* 4. 霓虹光晕：增加动画呼吸感 */
   .neon-glow {
-    box-shadow: 0 0 20px hsl(var(--neon-purple) / 0.5),
-                0 0 40px hsl(var(--neon-purple) / 0.3),
-                0 0 60px hsl(var(--neon-purple) / 0.1);
+    box-shadow: 0 0 15px hsl(var(--neon-purple) / 0.4),
+                0 0 30px hsl(var(--neon-purple) / 0.2);
   }
-
-  .blue-glow {
-    box-shadow: 0 0 20px hsl(var(--electric-blue) / 0.5),
-                0 0 40px hsl(var(--electric-blue) / 0.3);
-  }
-
-  .teal-glow {
-    box-shadow: 0 0 20px hsl(var(--teal) / 0.5),
-                0 0 40px hsl(var(--teal) / 0.3);
+  
+  .neon-border {
+    @apply border border-purple-500/50;
+    box-shadow: inset 0 0 20px hsl(var(--neon-purple) / 0.1);
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* 5. 动画类 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
