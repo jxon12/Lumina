@@ -1,18 +1,32 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy, CheckCircle2 } from 'lucide-react';
-// 🟢 Import Context
+import { Target, Users, Zap, Code, Database, Brain, Sparkles, Trophy, CheckCircle2, Plus } from 'lucide-react';
 import { useGlobalState } from '@/context/GlobalState';
 import { toast } from 'sonner';
 
+// 定义难度颜色映射，适配双模式
 const difficulties = {
-  easy: { color: 'from-green-500 to-emerald-500', text: 'text-green-400', border: 'border-green-500/30' },
-  medium: { color: 'from-yellow-500 to-orange-500', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-  hard: { color: 'from-red-500 to-pink-500', text: 'text-red-400', border: 'border-red-500/30' },
+  easy: { 
+    label: 'Easy',
+    bg: 'bg-emerald-500/10', 
+    text: 'text-emerald-600 dark:text-emerald-400', 
+    border: 'border-emerald-500/20' 
+  },
+  medium: { 
+    label: 'Medium',
+    bg: 'bg-amber-500/10', 
+    text: 'text-amber-600 dark:text-amber-400', 
+    border: 'border-amber-500/20' 
+  },
+  hard: { 
+    label: 'Hard',
+    bg: 'bg-rose-500/10', 
+    text: 'text-rose-600 dark:text-rose-400', 
+    border: 'border-rose-500/20' 
+  },
 };
 
-// 确保这里的 ID 与你的 context/mock DB 一致
 const quests = [
   {
     id: 1,
@@ -32,7 +46,7 @@ const quests = [
     description: 'Collaborate on designing a CNN architecture for medical image classification.',
     difficulty: 'hard',
     xp: 1200,
-    skills: ['PyTorch', 'Deep Learning', 'Computer Vision'],
+    skills: ['PyTorch', 'Deep Learning', 'CV'],
     participants: { current: 1, max: 2 },
     category: 'AI/ML',
     icon: Brain,
@@ -53,10 +67,10 @@ const quests = [
   {
     id: 4,
     title: 'Quantum Algorithm Implementation',
-    description: 'Implement Grovers search algorithm using Qiskit for optimization problems.',
+    description: 'Implement Grover\'s search algorithm using Qiskit for optimization problems.',
     difficulty: 'hard',
     xp: 1500,
-    skills: ['Qiskit', 'Python', 'Quantum Computing'],
+    skills: ['Qiskit', 'Python', 'Quantum'],
     participants: { current: 0, max: 2 },
     category: 'Quantum',
     icon: Zap,
@@ -91,7 +105,6 @@ const quests = [
 const filters = ['All', 'AI/ML', 'Data Science', 'Web3', 'Quantum', 'Biotech'];
 
 export default function QuestsPage() {
-  // 🟢 获取全局状态
   const { user, joinQuest } = useGlobalState();
 
   const handleJoin = (questId: number, xp: number) => {
@@ -108,35 +121,46 @@ export default function QuestsPage() {
       transition={{ duration: 0.5 }}
       className="space-y-8"
     >
-      <div className="flex items-center justify-between flex-wrap gap-4">
+      {/* --- Header Section --- */}
+      <div className="flex items-end justify-between flex-wrap gap-4">
         <div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-glow">
-              <Target className="w-6 h-6 text-white" />
+          <h1 className="text-4xl md:text-5xl font-bold mb-2 flex items-center gap-3 text-foreground tracking-tight">
+            <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center">
+              <Target className="w-6 h-6 text-primary" />
             </div>
             Quest Board
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Join collaborative research projects and earn XP
+          <p className="text-muted-foreground text-lg ml-1">
+            Collaborate on real-world research problems.
           </p>
         </div>
 
+        {/* Stats Pill */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="glass rounded-2xl px-6 py-3"
+          className="bg-card/50 backdrop-blur-md border border-border rounded-full px-6 py-2 flex items-center gap-4 shadow-sm"
         >
-          <div className="flex items-center gap-3">
-            <Trophy className="w-5 h-5 text-accent" />
-            <div>
-              <p className="text-2xl font-bold">{quests.length}</p>
-              <p className="text-xs text-muted-foreground">Quests Available</p>
+          <div className="flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-amber-500" />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-bold text-foreground">{quests.length}</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Available</span>
+            </div>
+          </div>
+          <div className="w-px h-8 bg-border" />
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <div className="flex flex-col leading-none">
+              <span className="text-sm font-bold text-foreground">5.2k</span>
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Total XP</span>
             </div>
           </div>
         </motion.div>
       </div>
 
+      {/* --- Filters (修复颜色问题) --- */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -148,10 +172,10 @@ export default function QuestsPage() {
             key={filter}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className={`px-4 py-2 rounded-xl transition-all ${
+            className={`px-5 py-2.5 rounded-full text-sm font-semibold transition-all shadow-sm ${
               index === 0
-                ? 'glass-strong border-2 border-primary/50 text-white'
-                : 'glass hover:glass-strong'
+                ? 'bg-primary text-white shadow-primary/25' // 🔴 修复：Active 状态使用紫色底白字
+                : 'bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground border border-transparent hover:border-border' // 🔴 修复：Inactive 状态适配深浅
             }`}
           >
             {filter}
@@ -159,13 +183,14 @@ export default function QuestsPage() {
         ))}
       </motion.div>
 
+      {/* --- Quest Grid --- */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {quests.map((quest, index) => {
           const Icon = quest.icon;
-          const difficultyStyle = difficulties[quest.difficulty as keyof typeof difficulties];
+          // 类型断言修复 TS 索引错误
+          const diffKey = quest.difficulty as keyof typeof difficulties;
+          const style = difficulties[diffKey];
           const progress = (quest.participants.current / quest.participants.max) * 100;
-          
-          // 🟢 检查是否已参加
           const isJoined = user.activeQuests.includes(quest.id);
 
           return (
@@ -174,91 +199,81 @@ export default function QuestsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              className={`glass rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-colors ${isJoined ? 'border-primary/50 bg-primary/5' : ''}`}
+              whileHover={{ scale: 1.01, y: -2 }}
+              // 🔴 升级：使用 bento-card 类
+              className={`bento-card p-6 flex flex-col justify-between group ${isJoined ? 'border-primary/50 ring-1 ring-primary/20 bg-primary/5' : ''}`}
             >
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className={`absolute inset-0 bg-gradient-to-br ${difficultyStyle.color} opacity-10`} />
-              </div>
-
-              <div className="absolute top-4 right-4 z-10">
-                <motion.div
-                  whileHover={{ rotate: 180, scale: 1.2 }}
-                  transition={{ duration: 0.3 }}
-                  className={`w-12 h-12 rounded-xl bg-gradient-to-br ${difficultyStyle.color} flex items-center justify-center shadow-lg`}
-                >
-                  <Icon className="w-6 h-6 text-white" />
-                </motion.div>
-              </div>
-
-              <div className="relative z-10">
-                <div className="mb-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className={`px-3 py-1 rounded-full glass text-xs font-bold uppercase ${difficultyStyle.text} border ${difficultyStyle.border}`}>
-                      {quest.difficulty}
+              <div>
+                {/* Card Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex gap-2">
+                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider border ${style.bg} ${style.text} ${style.border}`}>
+                      {style.label}
                     </span>
-                    <span className="px-3 py-1 rounded-full glass-strong text-xs font-semibold text-accent flex items-center gap-1">
+                    {/* 🔴 修复：XP Badge 颜色 */}
+                    <span className="px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 flex items-center gap-1">
                       <Sparkles className="w-3 h-3" />
                       +{quest.xp} XP
                     </span>
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{quest.title}</h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {quest.description}
-                  </p>
-                </div>
-
-                <div className="space-y-3 mb-4">
-                  <div className="flex flex-wrap gap-2">
-                    {quest.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-2 py-1 rounded-lg glass text-xs font-medium border border-secondary/20"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <Users className="w-4 h-4" />
-                      <span>
-                        {isJoined ? quest.participants.current + 1 : quest.participants.current}/{quest.participants.max} Students
-                      </span>
-                    </div>
-                    <span className="text-muted-foreground">{quest.timeEstimate}</span>
+                  {/* Icon */}
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isJoined ? 'bg-primary text-white' : 'bg-secondary text-muted-foreground group-hover:text-primary group-hover:bg-primary/10'} transition-colors`}>
+                    <Icon className="w-5 h-5" />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Team Progress</span>
-                    <span>{isJoined ? 'Joined' : `${quest.participants.current}/${quest.participants.max}`}</span>
+                {/* Content */}
+                <h3 className="text-xl font-bold mb-2 text-foreground group-hover:text-primary transition-colors">
+                  {quest.title}
+                </h3>
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-6 leading-relaxed">
+                  {quest.description}
+                </p>
+
+                {/* Skills */}
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {quest.skills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="px-2 py-1 rounded-md bg-secondary text-[11px] font-medium text-muted-foreground border border-border"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Footer / Action */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5" />
+                    <span>{quest.participants.current}/{quest.participants.max} Joined</span>
                   </div>
-                  <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: isJoined ? '10%' : `${progress}%` }}
-                      transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
-                      className={`h-full bg-gradient-to-r ${difficultyStyle.color}`}
-                    />
-                  </div>
+                  <span>{quest.timeEstimate}</span>
                 </div>
 
-                {/* 🟢 交互按钮 */}
-                <motion.button
-                  whileHover={!isJoined ? { scale: 1.02 } : {}}
-                  whileTap={!isJoined ? { scale: 0.98 } : {}}
+                {/* Progress Bar */}
+                <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: isJoined ? '10%' : `${progress}%` }}
+                    transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
+                    className={`h-full rounded-full ${isJoined ? 'bg-primary' : 'bg-muted-foreground/30'}`}
+                  />
+                </div>
+
+                {/* 🔴 交互按钮 */}
+                <button
                   onClick={(e) => {
-                    e.stopPropagation(); // 防止触发卡片点击（如果有的话）
+                    e.stopPropagation();
                     if (!isJoined) handleJoin(quest.id, quest.xp);
                   }}
                   disabled={isJoined}
-                  className={`w-full mt-4 py-3 rounded-xl font-semibold shadow-lg transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-3 rounded-xl font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                     isJoined 
-                      ? 'bg-slate-800 text-slate-400 cursor-default border border-white/5' 
-                      : `bg-gradient-to-r ${difficultyStyle.color} text-white`
+                      ? 'bg-secondary text-muted-foreground cursor-default border border-border' 
+                      : 'bg-foreground text-background hover:bg-primary hover:text-white shadow-lg hover:shadow-primary/25 active:scale-95'
                   }`}
                 >
                   {isJoined ? (
@@ -267,33 +282,35 @@ export default function QuestsPage() {
                       Active Quest
                     </>
                   ) : (
-                    'Join Quest'
+                    <>
+                      Join Quest
+                      <ArrowUpRight className="w-4 h-4 opacity-50" />
+                    </>
                   )}
-                </motion.button>
+                </button>
               </div>
             </motion.div>
           );
         })}
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1 }}
-        className="glass rounded-2xl p-6 text-center"
-      >
-        <h3 className="text-xl font-bold mb-2">Can't find what you're looking for?</h3>
-        <p className="text-muted-foreground mb-4">
-          Create your own quest and invite others to collaborate!
-        </p>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="px-6 py-3 rounded-xl bg-gradient-to-r from-primary via-secondary to-accent text-white font-semibold neon-glow"
+        
+        {/* Create New Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1 }}
+          className="bento-card p-6 flex flex-col items-center justify-center text-center gap-4 border-dashed border-2 border-border bg-transparent hover:bg-secondary/50 cursor-pointer group min-h-[300px]"
         >
-          Create New Quest
-        </motion.button>
-      </motion.div>
+          <div className="w-16 h-16 rounded-full bg-secondary flex items-center justify-center group-hover:scale-110 transition-transform">
+            <Plus className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-foreground">Create Custom Quest</h3>
+            <p className="text-sm text-muted-foreground mt-1 max-w-[200px] mx-auto">
+              Have a research idea? Recruit a team and start building.
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
