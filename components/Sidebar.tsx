@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useGlobalState } from '@/context/GlobalState';
-import { ThemeToggle } from './ThemeToggle'; // 记得引入
+import { ThemeToggle } from './ThemeToggle'; 
 
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
@@ -19,10 +19,9 @@ export default function Sidebar() {
   const { user } = useGlobalState();
 
   return (
-    // 🟢 改动：背景改为 bg-background/80 (自动适配)，边框改为 border-r
     <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-72 p-6 flex-col justify-between border-r border-border bg-background/80 backdrop-blur-xl z-50">
       
-      {/* Top Section */}
+    
       <div className="flex flex-col gap-8">
         <Link href="/" className="flex items-center gap-3 px-2">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -57,9 +56,7 @@ export default function Sidebar() {
         </nav>
       </div>
 
-      {/* Bottom Section */}
       <div className="space-y-4">
-        {/* XP Card - 极简线条版 */}
         <div className="p-4 rounded-2xl border border-border bg-card/50">
           <div className="flex justify-between items-center mb-2">
             <span className="text-xs font-semibold text-muted-foreground">Level {user.level}</span>
@@ -80,7 +77,6 @@ export default function Sidebar() {
                 <span className="text-xs text-muted-foreground">Student</span>
              </div>
           </div>
-          {/* 🟢 放入切换按钮 */}
           <ThemeToggle />
         </div>
       </div>
