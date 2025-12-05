@@ -2,255 +2,153 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, Award, Users, Zap, BookOpen, Clock } from 'lucide-react';
+import { Sparkles, ArrowUpRight, Globe, Zap, Users, Trophy } from 'lucide-react';
 import SparkMatchmaker from '@/components/SparkMatchmaker';
-
-const stats = [
-  { label: 'Active Quests', value: '3', icon: BookOpen, color: 'from-primary to-purple-500' },
-  { label: 'Mentorship Hours', value: '12.5', icon: Clock, color: 'from-secondary to-blue-500' },
-  { label: 'XP Earned', value: '2,450', icon: TrendingUp, color: 'from-accent to-teal-500' },
-];
-
-const recentActivity = [
-  {
-    id: 1,
-    type: 'quest',
-    title: 'Completed "Data Cleaning for NLP"',
-    xp: '+500 XP',
-    time: '2 hours ago',
-    color: 'border-primary/50',
-    bg: 'bg-primary/10'
-  },
-  {
-    id: 2,
-    type: 'mentor',
-    title: 'Session with Dr. Martinez',
-    xp: '+200 XP',
-    time: '1 day ago',
-    color: 'border-secondary/50',
-    bg: 'bg-secondary/10'
-  },
-  {
-    id: 3,
-    type: 'achievement',
-    title: 'Unlocked "Research Pioneer" Badge',
-    xp: '+100 XP',
-    time: '2 days ago',
-    color: 'border-accent/50',
-    bg: 'bg-accent/10'
-  },
-];
-
-const inspirations = [
-  "Research is seeing what everyone else has seen and thinking what nobody else has thought.",
-  "The best way to predict the future is to invent it.",
-  "Innovation distinguishes between a leader and a follower.",
-  "Discovery consists of seeing what everybody has seen and thinking what nobody has thought.",
-];
+import { useGlobalState } from '@/context/GlobalState'; // 假设你还在用这个
 
 export default function Home() {
   const [isSparkOpen, setIsSparkOpen] = useState(false);
-  const [greeting, setGreeting] = useState('Good morning');
-  const [randomInspiration, setRandomInspiration] = useState(inspirations[0]);
+  const [greeting, setGreeting] = useState('Good Morning');
+  // 如果你有 global state 里的 user，这里可以用
+  // const { user } = useGlobalState(); 
+  const user = { name: "Alex", xp: 2450 }; // Mock 数据
 
-  // 客户端挂载后计算时间，避免服务端渲染不一致
   useEffect(() => {
-    const currentHour = new Date().getHours();
-    setGreeting(currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening');
-    setRandomInspiration(inspirations[Math.floor(Math.random() * inspirations.length)]);
+    const hours = new Date().getHours();
+    setGreeting(hours < 12 ? 'Good Morning' : hours < 18 ? 'Good Afternoon' : 'Good Evening');
   }, []);
 
+  // 动画配置：Apple 风格通常是慢速、平滑的
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8, ease: [0.2, 0.8, 0.2, 1] } // Apple 经典的贝塞尔曲线
+  };
+
   return (
-    <>
-      {/* 🟢 1. 氛围光背景 (Ambient Background) */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[128px] opacity-40 mix-blend-screen animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[128px] opacity-40 mix-blend-screen" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-8 pb-24 lg:pb-0" // 移动端底部留白
+    <div className="min-h-screen pb-24 pt-8 lg:pt-0">
+      <motion.div 
+        initial="initial"
+        animate="animate"
+        className="max-w-7xl mx-auto space-y-6"
       >
-        <div>
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold mb-2 tracking-tight"
-          >
-            {greeting}, <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">Alex</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-lg font-light"
-          >
-            Ready to ignite some sparks today?
-          </motion.p>
-        </div>
-
-        {/* Daily Inspiration */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="relative overflow-hidden glass rounded-3xl p-8 border border-white/10"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10" />
-          <div className="relative z-10">
-            <div className="flex items-start gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-glow flex-shrink-0 shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold mb-2 text-white">Daily Inspiration</h2>
-                <p className="text-lg text-slate-300 italic leading-relaxed font-serif">
-                  "{randomInspiration}"
-                </p>
-              </div>
+        
+        {/* --- Header Section --- */}
+        <motion.div variants={fadeInUp} className="flex flex-col md:flex-row justify-between items-end md:items-center px-2">
+          <div>
+            <h1 className="text-4xl md:text-6xl font-semibold text-white tracking-tighter">
+              {greeting}, <span className="text-white/50">{user.name}.</span>
+            </h1>
+            <p className="text-lg text-white/40 mt-2 font-medium">
+              Ready to create something extraordinary?
+            </p>
+          </div>
+          <div className="hidden md:block text-right">
+            <p className="text-xs font-mono text-white/30 uppercase tracking-widest">System Status</p>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-sm text-emerald-500 font-medium">Operational</span>
             </div>
           </div>
         </motion.div>
 
-        {/* 🟢 2. 带有 "Internal Light" 动效的 Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {stats.map((stat, index) => (
-            <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              className="glass rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_30px_rgba(124,58,237,0.15)]"
-            >
-              {/* 流光背景特效 */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, repeatDelay: 1 }}
-                  >
-                    <TrendingUp className="w-5 h-5 text-accent opacity-50 group-hover:opacity-100 transition-opacity" />
-                  </motion.div>
-                </div>
-                <p className="text-3xl font-bold mb-1 text-white">{stat.value}</p>
-                <p className="text-sm text-slate-400 group-hover:text-slate-200 transition-colors">{stat.label}</p>
+        {/* --- The Bento Grid --- */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 h-auto md:h-[600px]">
+          
+          {/* 1. 主要行动卡片 (占用大面积) */}
+          <motion.div 
+            variants={fadeInUp}
+            className="col-span-1 md:col-span-8 md:row-span-2 bento-card group relative p-8 flex flex-col justify-between cursor-pointer"
+            onClick={() => setIsSparkOpen(true)}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 via-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            <div className="relative z-10 flex justify-between items-start">
+              <div className="w-14 h-14 rounded-full bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/10 group-hover:scale-110 transition-transform duration-500">
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
-            </motion.div>
-          ))}
-        </div>
+              <ArrowUpRight className="w-6 h-6 text-white/30 group-hover:text-white group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Recent Activity */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="glass rounded-3xl p-6 lg:p-8"
-            >
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-white">
-                <Award className="w-6 h-6 text-accent" />
-                Recent Activity
+            <div className="relative z-10 max-w-lg">
+              <h2 className="text-3xl md:text-5xl font-semibold text-white mb-4 tracking-tight">
+                Find your <br/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Research Partner.</span>
               </h2>
+              <p className="text-lg text-white/50">
+                AI-powered matching to connect you with mentors and peers who share your wavelength.
+              </p>
+            </div>
+          </motion.div>
 
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.03)' }}
-                    className={`rounded-2xl p-4 border-l-4 ${activity.color} bg-white/5 cursor-pointer transition-colors`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-slate-200 mb-1">{activity.title}</p>
-                        <p className="text-sm text-slate-500">{activity.time}</p>
-                      </div>
-                      <span className="px-3 py-1 rounded-full bg-slate-900/50 border border-white/5 text-sm font-semibold text-accent shadow-sm">
-                        {activity.xp}
-                      </span>
-                    </div>
-                  </motion.div>
+          {/* 2. 数据卡片 (XP) */}
+          <motion.div 
+            variants={fadeInUp}
+            className="col-span-1 md:col-span-4 md:row-span-1 bento-card p-6 flex flex-col justify-center relative group"
+          >
+             <div className="absolute top-0 right-0 p-32 bg-blue-500/20 blur-[80px] rounded-full group-hover:bg-blue-500/30 transition-colors" />
+             <div className="relative z-10">
+               <p className="text-sm font-medium text-white/40 uppercase tracking-widest mb-1">Total XP</p>
+               <div className="flex items-baseline gap-1">
+                 <span className="text-5xl font-semibold text-white tracking-tighter">{user.xp.toLocaleString()}</span>
+                 <span className="text-sm text-emerald-400 font-medium">+12%</span>
+               </div>
+               <div className="mt-4 h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                 <motion.div 
+                   initial={{ width: 0 }}
+                   animate={{ width: '65%' }}
+                   transition={{ duration: 1.5, delay: 0.5 }}
+                   className="h-full bg-white" 
+                 />
+               </div>
+             </div>
+          </motion.div>
+
+          {/* 3. 网络卡片 (Network) */}
+          <motion.div 
+            variants={fadeInUp}
+            className="col-span-1 md:col-span-4 md:row-span-1 bento-card p-6 flex items-center justify-between group"
+          >
+            <div>
+              <p className="text-sm font-medium text-white/40 uppercase tracking-widest mb-2">Network</p>
+              <div className="flex -space-x-3">
+                {[1,2,3].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-2 border-black bg-zinc-800 flex items-center justify-center text-xs text-white">
+                    <img src={`https://i.pravatar.cc/100?u=${i}`} className="w-full h-full rounded-full opacity-80" alt="" />
+                  </div>
                 ))}
-              </div>
-            </motion.div>
-
-            {/* 🟢 3. Network Section - 使用真实头像 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="glass rounded-3xl p-6 lg:p-8 flex flex-col justify-between"
-            >
-              <div>
-                <h2 className="text-2xl font-bold mb-4 flex items-center gap-3 text-white">
-                  <Users className="w-6 h-6 text-secondary" />
-                  Your Network
-                </h2>
-                <p className="text-slate-400 mb-8">
-                  You have connected with 12 amazing minds this week. Keep expanding your neural network!
-                </p>
-              </div>
-
-              <div className="bg-slate-900/30 rounded-2xl p-6 border border-white/5">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-slate-300">Active Now</span>
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex -space-x-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <motion.div
-                        key={i}
-                        whileHover={{ y: -5, zIndex: 10 }}
-                        className="relative z-0 hover:z-10 transition-all"
-                      >
-                        <img 
-                          src={`https://i.pravatar.cc/150?u=lumina_user_${i * 10}`} 
-                          alt="Peer" 
-                          className="w-12 h-12 rounded-full border-2 border-slate-950 object-cover shadow-lg"
-                        />
-                      </motion.div>
-                    ))}
-                    <div className="w-12 h-12 rounded-full glass-strong border-2 border-slate-950 flex items-center justify-center text-sm font-bold text-white z-0">
-                      +8
-                    </div>
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">12 Connections</p>
-                    <p className="text-xs text-slate-400">4 mentors • 8 peers</p>
-                  </div>
+                <div className="w-10 h-10 rounded-full border-2 border-black bg-white/10 flex items-center justify-center text-xs font-medium text-white">
+                  +8
                 </div>
               </div>
-            </motion.div>
+            </div>
+            <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+              <Users className="w-5 h-5 text-white/70" />
+            </div>
+          </motion.div>
+
+          {/* 4. 每日灵感 (Wide) */}
+          <motion.div 
+            variants={fadeInUp}
+            className="col-span-1 md:col-span-12 bento-card p-8 flex flex-col md:flex-row items-center gap-6"
+          >
+            <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-amber-300 to-orange-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-orange-500/20">
+              <Zap className="w-6 h-6 text-black fill-black" />
+            </div>
+            <div className="text-center md:text-left">
+              <p className="text-xl md:text-2xl font-serif italic text-white/90">
+                "The best way to predict the future is to invent it."
+              </p>
+              <p className="text-sm text-white/40 mt-2">— Alan Kay</p>
+            </div>
+          </motion.div>
+
         </div>
+
       </motion.div>
 
-      {/* 🟢 4. FAB 按钮 - 位置修复 */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 20 }}
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsSparkOpen(true)}
-        className="fixed bottom-24 lg:bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center neon-glow shadow-2xl z-40 cursor-pointer border border-white/20"
-      >
-        <Sparkles className="w-8 h-8 text-white" />
-      </motion.button>
-
+      {/* 浮动按钮 (如果需要保留) */}
       <SparkMatchmaker isOpen={isSparkOpen} onClose={() => setIsSparkOpen(false)} />
-    </>
+    </div>
   );
 }
