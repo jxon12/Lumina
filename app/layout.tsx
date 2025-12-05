@@ -1,6 +1,9 @@
-// app/layout.tsx
-
-// ... 其他 imports
+import './globals.css';
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import Sidebar from '@/components/Sidebar';
+import BottomNav from '@/components/BottomNav';
+import { GlobalProvider } from '@/context/GlobalState'; // 确保路径对应你刚才创建的文件
 import { ThemeProvider } from "@/components/theme-provider"
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
