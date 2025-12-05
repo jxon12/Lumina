@@ -4,6 +4,8 @@ import { Home, Target, Users, User, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'framer-motion';
+// 🟢 Import Context
+import { useGlobalState } from '@/context/GlobalState';
 
 const navItems = [
   { name: 'Home', href: '/', icon: Home },
@@ -14,10 +16,12 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
+  // 🟢 获取全局状态
+  const { user } = useGlobalState();
 
   return (
-    <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-72 p-6 flex-col gap-6">
-      <Link href="/" className="flex items-center gap-3 mb-4">
+    <aside className="hidden lg:flex fixed left-0 top-0 h-screen w-72 p-6 flex-col gap-6 border-r border-white/5 bg-slate-950/50 backdrop-blur-xl">
+      <Link href="/" className="flex items-center gap-3 mb-4 px-2">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-glow">
           <Sparkles className="w-6 h-6 text-white" />
         </div>
@@ -48,8 +52,8 @@ export default function Sidebar() {
                   transition-all duration-300
                   ${
                     isActive
-                      ? 'glass-strong text-white'
-                      : 'text-muted-foreground hover:text-white hover:glass'
+                      ? 'glass-strong text-white border border-white/10'
+                      : 'text-muted-foreground hover:text-white hover:bg-white/5'
                   }
                 `}
               >
@@ -76,20 +80,26 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="glass rounded-xl p-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Level 12</span>
-          <span className="text-xs text-muted-foreground">2,450 XP</span>
+      {/* 🟢 动态 XP 卡片 */}
+      <div className="glass rounded-xl p-4 space-y-3 relative overflow-hidden group">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+        
+        <div className="flex items-center justify-between relative z-10">
+          <span className="text-sm font-bold text-white">Level {user.level}</span>
+          <span className="text-xs text-accent font-mono">{user.xp.toLocaleString()} XP</span>
         </div>
-        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+        
+        <div className="h-2 bg-slate-800 rounded-full overflow-hidden relative z-10">
           <motion.div
             initial={{ width: 0 }}
-            animate={{ width: '73%' }}
+            animate={{ width: `${(user.xp % 1000) / 10}%` }} // 简单的进度模拟
             transition={{ duration: 1, ease: 'easeOut' }}
             className="h-full bg-gradient-to-r from-primary via-secondary to-accent"
           />
         </div>
-        <p className="text-xs text-muted-foreground">550 XP to Level 13</p>
+        <p className="text-xs text-muted-foreground relative z-10 text-right">
+          {1000 - (user.xp % 1000)} XP to next level
+        </p>
       </div>
     </aside>
   );
