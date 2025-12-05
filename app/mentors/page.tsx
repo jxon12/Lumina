@@ -103,7 +103,7 @@ export default function MentorsPage() {
       {/* 🔴 左侧列表：增加悬浮卡片效果 */}
       <div className="w-80 hidden lg:flex flex-col gap-4">
         <div className="glass rounded-2xl p-6 border-l-4 border-purple-500">
-          <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+          <h2 className="text-xl font-bold flex items-center gap-2 text-black">
             <Cpu className="w-5 h-5 text-purple-400" />
             Active Links
           </h2>
