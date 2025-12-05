@@ -129,7 +129,7 @@ export default function MentorsPage() {
                   }`} />
                 </div>
                 <div>
-                  <p className={`text-sm font-semibold ${index === 0 ? 'text-white' : 'text-slate-300'}`}>{mentor.name}</p>
+                  <p className={`text-sm font-semibold ${index === 0 ? 'text-black' : 'text-slate-300'}`}>{mentor.name}</p>
                   <p className="text-[10px] text-slate-500 uppercase tracking-wider">{mentor.field}</p>
                 </div>
               </div>
