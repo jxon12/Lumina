@@ -4,83 +4,49 @@
 
 @layer base {
   :root {
-    --background: 222 47% 5%;
-    --foreground: 210 40% 98%;
-    --primary: 271 91% 65%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217 91% 60%;
-    --accent: 180 62% 55%;
+    --background: 0 0% 0%; /* 纯黑，Apple 风格 */
+    --foreground: 0 0% 98%;
     
-    /* 定义更细腻的霓虹色变量 */
-    --neon-purple: 271 91% 65%;
-    --electric-blue: 217 91% 60%;
-    --teal: 180 62% 55%;
-  }
-
-  /* 1. 隐藏默认滚动条，使用极简风格 */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
-  }
-
-  /* 2. 选中文本变成霓虹紫，极客感拉满 */
-  ::selection {
-    background: hsl(var(--neon-purple) / 0.3);
-    color: white;
+    /* 定义更高级的“极光色” */
+    --aurora-1: 270 50% 40%; /* 深紫 */
+    --aurora-2: 210 50% 40%; /* 深蓝 */
+    --aurora-3: 160 50% 40%; /* 深青 */
   }
 
   body {
-    @apply bg-slate-950 text-foreground overflow-x-hidden;
-    /* 增加噪点纹理 (Noise Texture) 让深色背景不单调 */
+    @apply bg-black text-white antialiased selection:bg-white/20;
+    /* 核心机密：噪点纹理 + 极光背景 */
+    background-color: black;
     background-image: 
-      radial-gradient(circle at 15% 50%, hsl(271 91% 65% / 0.08), transparent 25%),
-      radial-gradient(circle at 85% 30%, hsl(180 62% 55% / 0.08), transparent 25%);
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E"),
+      radial-gradient(circle at 50% 0%, rgba(120, 119, 198, 0.15), transparent 60%),
+      radial-gradient(circle at 80% 10%, rgba(76, 29, 149, 0.1), transparent 50%);
   }
 }
 
 @layer components {
-  /* 3. 升级版毛玻璃：加入 inset shadow 模拟玻璃厚度 */
-  .glass {
-    @apply bg-slate-900/40 backdrop-blur-xl border border-white/10 shadow-xl;
-    box-shadow: 
-      0 4px 30px rgba(0, 0, 0, 0.1),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05); /* 内部高光 */
-  }
-
-  .glass-strong {
-    @apply bg-slate-900/60 backdrop-blur-2xl border border-white/10 shadow-2xl;
-    box-shadow: 
-      0 8px 32px 0 rgba(0, 0, 0, 0.3),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05);
-  }
-
-  /* 4. 霓虹光晕：增加动画呼吸感 */
-  .neon-glow {
-    box-shadow: 0 0 15px hsl(var(--neon-purple) / 0.4),
-                0 0 30px hsl(var(--neon-purple) / 0.2);
+  /* Apple 风格的卡片：更通透，更平滑 */
+  .bento-card {
+    @apply relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-2xl transition-all duration-500;
   }
   
-  .neon-border {
-    @apply border border-purple-500/50;
-    box-shadow: inset 0 0 20px hsl(var(--neon-purple) / 0.1);
+  .bento-card:hover {
+    @apply border-white/20 bg-white/[0.07];
+    transform: scale-[1.01]; /* 极其微小的放大，体现精致感 */
+  }
+
+  /* 标题排版：更紧凑 */
+  .text-apple-title {
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.02em; /* Apple 标题通常字母间距较紧 */
+  }
+
+  /* 极简滚动条 */
+  ::-webkit-scrollbar {
+    width: 0px; /* 隐藏滚动条，像移动端一样 */
   }
 }
 
-/* 5. 动画类 */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-.animate-float {
-  animation: float 6s ease-in-out infinite;
+@layer utilities {
+  .text-balance { text-wrap: balance; }
 }
