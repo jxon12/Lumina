@@ -1,256 +1,247 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, TrendingUp, Award, Users, Zap, BookOpen, Clock } from 'lucide-react';
-import SparkMatchmaker from '@/components/SparkMatchmaker';
+import { Users, Video, Phone, MoreVertical, Send, Paperclip, Code, Smile, Sparkles, Cpu } from 'lucide-react';
+import { useState } from 'react';
 
-const stats = [
-  { label: 'Active Quests', value: '3', icon: BookOpen, color: 'from-primary to-purple-500' },
-  { label: 'Mentorship Hours', value: '12.5', icon: Clock, color: 'from-secondary to-blue-500' },
-  { label: 'XP Earned', value: '2,450', icon: TrendingUp, color: 'from-accent to-teal-500' },
-];
-
-const recentActivity = [
+// ... (保持你原有的 messages 和 contacts 数据不变) ...
+const messages = [
+  // ... Keep your mock data here ...
   {
     id: 1,
-    type: 'quest',
-    title: 'Completed "Data Cleaning for NLP"',
-    xp: '+500 XP',
-    time: '2 hours ago',
-    color: 'border-primary/50',
-    bg: 'bg-primary/10'
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Hey Alex! I saw your question about neural network optimization. Happy to help!',
+    time: '10:32 AM',
+    gradient: 'from-purple-500 to-pink-500',
   },
   {
     id: 2,
-    type: 'mentor',
-    title: 'Session with Dr. Martinez',
-    xp: '+200 XP',
-    time: '1 day ago',
-    color: 'border-secondary/50',
-    bg: 'bg-secondary/10'
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'Thank you so much! I\'m struggling with the learning rate decay strategy. My model keeps overshooting the optimal point.',
+    time: '10:35 AM',
+    gradient: 'from-primary to-secondary',
   },
   {
     id: 3,
-    type: 'achievement',
-    title: 'Unlocked "Research Pioneer" Badge',
-    xp: '+100 XP',
-    time: '2 days ago',
-    color: 'border-accent/50',
-    bg: 'bg-accent/10'
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Classic issue! Have you tried implementing a cosine annealing schedule? It works really well for this.',
+    time: '10:37 AM',
+    gradient: 'from-purple-500 to-pink-500',
+  },
+  {
+    id: 4,
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'Not yet! Could you share an example?',
+    time: '10:38 AM',
+    gradient: 'from-primary to-secondary',
+  },
+  {
+    id: 5,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Absolutely! Here\'s a quick implementation:',
+    time: '10:40 AM',
+    gradient: 'from-purple-500 to-pink-500',
+    isCode: true,
+    code: `import torch.optim as optim
+from torch.optim.lr_scheduler import CosineAnnealingLR
+
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+scheduler = CosineAnnealingLR(optimizer, T_max=50, eta_min=1e-6)
+
+# In your training loop:
+for epoch in range(num_epochs):
+    train(...)
+    scheduler.step()`,
+  },
+  {
+    id: 6,
+    sender: 'user',
+    name: 'Alex',
+    avatar: 'A',
+    content: 'This is perfect! The T_max parameter - is that the total number of epochs?',
+    time: '10:42 AM',
+    gradient: 'from-primary to-secondary',
+  },
+  {
+    id: 7,
+    sender: 'mentor',
+    name: 'Dr. Sarah Chen',
+    avatar: 'SC',
+    content: 'Exactly! T_max is the number of iterations for the cosine cycle. You can set it to your total epochs, or make it shorter for multiple cycles.',
+    time: '10:43 AM',
+    gradient: 'from-purple-500 to-pink-500',
   },
 ];
 
-const inspirations = [
-  "Research is seeing what everyone else has seen and thinking what nobody else has thought.",
-  "The best way to predict the future is to invent it.",
-  "Innovation distinguishes between a leader and a follower.",
-  "Discovery consists of seeing what everybody has seen and thinking what nobody has thought.",
+const mentorContacts = [
+  { id: 1, name: 'Dr. Sarah Chen', status: 'online', avatar: 'SC', field: 'AI/ML', gradient: 'from-purple-500 to-pink-500' },
+  { id: 2, name: 'Prof. James Wilson', status: 'away', avatar: 'JW', field: 'Quantum', gradient: 'from-blue-500 to-cyan-500' },
+  { id: 3, name: 'Dr. Maya Patel', status: 'offline', avatar: 'MP', field: 'Biotech', gradient: 'from-green-500 to-emerald-500' },
+  { id: 4, name: 'Dr. Carlos Rodriguez', status: 'online', avatar: 'CR', field: 'Web3', gradient: 'from-orange-500 to-red-500' },
 ];
 
-export default function Home() {
-  const [isSparkOpen, setIsSparkOpen] = useState(false);
-  const [greeting, setGreeting] = useState('Good morning');
-  const [randomInspiration, setRandomInspiration] = useState(inspirations[0]);
-
-  // 客户端挂载后计算时间，避免服务端渲染不一致
-  useEffect(() => {
-    const currentHour = new Date().getHours();
-    setGreeting(currentHour < 12 ? 'Good morning' : currentHour < 18 ? 'Good afternoon' : 'Good evening');
-    setRandomInspiration(inspirations[Math.floor(Math.random() * inspirations.length)]);
-  }, []);
+export default function MentorsPage() {
+  const [message, setMessage] = useState('');
+  const activeMentor = mentorContacts[0];
 
   return (
-    <>
-      {/* 🟢 1. 氛围光背景 (Ambient Background) */}
-      <div className="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-purple-600/20 rounded-full blur-[128px] opacity-40 mix-blend-screen animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[128px] opacity-40 mix-blend-screen" />
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="space-y-8 pb-24 lg:pb-0" // 移动端底部留白
-      >
-        <div>
-          <motion.h1
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold mb-2 tracking-tight"
-          >
-            {greeting}, <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">Alex</span>
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-muted-foreground text-lg font-light"
-          >
-            Ready to ignite some sparks today?
-          </motion.p>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="h-[calc(100vh-8rem)] flex gap-6"
+    >
+      {/* 🔴 左侧列表：增加悬浮卡片效果 */}
+      <div className="w-80 hidden lg:flex flex-col gap-4">
+        <div className="glass rounded-2xl p-6 border-l-4 border-purple-500">
+          <h2 className="text-xl font-bold flex items-center gap-2 text-white">
+            <Cpu className="w-5 h-5 text-purple-400" />
+            Active Links
+          </h2>
+          <p className="text-xs text-slate-400 mt-1">Encrypted • Low Latency</p>
         </div>
 
-        {/* Daily Inspiration */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="relative overflow-hidden glass rounded-3xl p-8 border border-white/10"
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10" />
-          <div className="relative z-10">
-            <div className="flex items-start gap-5">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center neon-glow flex-shrink-0 shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-xl font-bold mb-2 text-white">Daily Inspiration</h2>
-                <p className="text-lg text-slate-300 italic leading-relaxed font-serif">
-                  "{randomInspiration}"
-                </p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* 🟢 2. 带有 "Internal Light" 动效的 Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {stats.map((stat, index) => (
+        <div className="flex-1 glass rounded-2xl p-2 space-y-1 overflow-y-auto">
+          {mentorContacts.map((mentor, index) => (
             <motion.div
-              key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 + index * 0.1 }}
-              whileHover={{ scale: 1.02, y: -4 }}
-              className="glass rounded-2xl p-6 relative overflow-hidden group cursor-pointer transition-all duration-300 hover:border-white/20 hover:shadow-[0_0_30px_rgba(124,58,237,0.15)]"
+              key={mentor.id}
+              whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.05)' }}
+              className={`p-3 rounded-xl cursor-pointer transition-all border border-transparent ${
+                index === 0 ? 'bg-white/5 border-white/10 shadow-inner' : ''
+              }`}
             >
-              {/* 流光背景特效 */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out" />
-              
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center shadow-lg`}>
-                    <stat.icon className="w-6 h-6 text-white" />
+              <div className="flex items-center gap-3">
+                <div className="relative">
+                  <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${mentor.gradient} flex items-center justify-center text-xs font-bold text-white shadow-lg`}>
+                    {mentor.avatar}
                   </div>
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, repeatDelay: 1 }}
-                  >
-                    <TrendingUp className="w-5 h-5 text-accent opacity-50 group-hover:opacity-100 transition-opacity" />
-                  </motion.div>
+                  <div className={`absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900 ${
+                    mentor.status === 'online' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-500'
+                  }`} />
                 </div>
-                <p className="text-3xl font-bold mb-1 text-white">{stat.value}</p>
-                <p className="text-sm text-slate-400 group-hover:text-slate-200 transition-colors">{stat.label}</p>
+                <div>
+                  <p className={`text-sm font-semibold ${index === 0 ? 'text-white' : 'text-slate-300'}`}>{mentor.name}</p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wider">{mentor.field}</p>
+                </div>
               </div>
             </motion.div>
           ))}
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Recent Activity */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              className="glass rounded-3xl p-6 lg:p-8"
-            >
-              <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-white">
-                <Award className="w-6 h-6 text-accent" />
-                Recent Activity
-              </h2>
-
-              <div className="space-y-4">
-                {recentActivity.map((activity, index) => (
-                  <motion.div
-                    key={activity.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.8 + index * 0.1 }}
-                    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.03)' }}
-                    className={`rounded-2xl p-4 border-l-4 ${activity.color} bg-white/5 cursor-pointer transition-colors`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-slate-200 mb-1">{activity.title}</p>
-                        <p className="text-sm text-slate-500">{activity.time}</p>
-                      </div>
-                      <span className="px-3 py-1 rounded-full bg-slate-900/50 border border-white/5 text-sm font-semibold text-accent shadow-sm">
-                        {activity.xp}
-                      </span>
-                    </div>
-                  </motion.div>
-                ))}
+      {/* 🔴 右侧聊天区：HUD 风格 */}
+      <div className="flex-1 glass-strong rounded-3xl flex flex-col overflow-hidden border border-white/10 relative">
+        {/* 顶部装饰线 */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
+        
+        {/* Header */}
+        <div className="p-4 border-b border-white/5 flex justify-between items-center bg-slate-900/20">
+          <div className="flex items-center gap-4">
+            <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${activeMentor.gradient} p-[2px]`}>
+              <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center">
+                 <span className="text-sm font-bold text-white">{activeMentor.avatar}</span>
               </div>
-            </motion.div>
-
-            {/* 🟢 3. Network Section - 使用真实头像 */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="glass rounded-3xl p-6 lg:p-8 flex flex-col justify-between"
-            >
-              <div>
-                <h2 className="text-2xl font-bold mb-4 flex items-center gap-3 text-white">
-                  <Users className="w-6 h-6 text-secondary" />
-                  Your Network
-                </h2>
-                <p className="text-slate-400 mb-8">
-                  You have connected with 12 amazing minds this week. Keep expanding your neural network!
-                </p>
-              </div>
-
-              <div className="bg-slate-900/30 rounded-2xl p-6 border border-white/5">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium text-slate-300">Active Now</span>
-                  <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="flex -space-x-4">
-                    {[1, 2, 3, 4].map((i) => (
-                      <motion.div
-                        key={i}
-                        whileHover={{ y: -5, zIndex: 10 }}
-                        className="relative z-0 hover:z-10 transition-all"
-                      >
-                        <img 
-                          src={`https://i.pravatar.cc/150?u=lumina_user_${i * 10}`} 
-                          alt="Peer" 
-                          className="w-12 h-12 rounded-full border-2 border-slate-950 object-cover shadow-lg"
-                        />
-                      </motion.div>
-                    ))}
-                    <div className="w-12 h-12 rounded-full glass-strong border-2 border-slate-950 flex items-center justify-center text-sm font-bold text-white z-0">
-                      +8
-                    </div>
-                  </div>
-                  <div>
-                    <p className="font-bold text-white">12 Connections</p>
-                    <p className="text-xs text-slate-400">4 mentors • 8 peers</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            </div>
+            <div>
+              <h3 className="font-bold text-white flex items-center gap-2">
+                {activeMentor.name}
+                <Sparkles className="w-3 h-3 text-yellow-400" />
+              </h3>
+              <p className="text-xs text-purple-300 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
+                Secure Connection Established
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 text-slate-400">
+            <Video className="w-5 h-5 hover:text-white cursor-pointer transition-colors" />
+            <MoreVertical className="w-5 h-5 hover:text-white cursor-pointer transition-colors" />
+          </div>
         </div>
-      </motion.div>
 
-      {/* 🟢 4. FAB 按钮 - 位置修复 */}
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: 1, type: 'spring', stiffness: 260, damping: 20 }}
-        whileHover={{ scale: 1.1, rotate: 5 }}
-        whileTap={{ scale: 0.9 }}
-        onClick={() => setIsSparkOpen(true)}
-        className="fixed bottom-24 lg:bottom-8 right-8 w-16 h-16 rounded-full bg-gradient-to-br from-primary via-secondary to-accent flex items-center justify-center neon-glow shadow-2xl z-40 cursor-pointer border border-white/20"
-      >
-        <Sparkles className="w-8 h-8 text-white" />
-      </motion.button>
+        {/* 消息区域 */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+          {messages.map((msg, index) => {
+            const isUser = msg.sender === 'user';
+            return (
+              <motion.div
+                key={msg.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                className={`flex gap-4 ${isUser ? 'flex-row-reverse' : ''}`}
+              >
+                {!isUser && (
+                   <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${msg.gradient} flex items-center justify-center text-xs text-white shadow-lg`}>
+                     {msg.avatar}
+                   </div>
+                )}
+                
+                <div className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                  <div className={`
+                    p-4 rounded-2xl backdrop-blur-md border 
+                    ${isUser 
+                      ? 'bg-purple-500/20 border-purple-500/30 text-purple-50 rounded-tr-sm' 
+                      : 'bg-slate-800/40 border-white/10 text-slate-200 rounded-tl-sm'
+                    }
+                  `}>
+                    {msg.isCode ? (
+                      <div className="space-y-2">
+                        <p className="text-sm opacity-90">{msg.content}</p>
+                        {/* 代码块美化 */}
+                        <div className="bg-slate-950/80 rounded-lg p-3 border border-slate-800 font-mono text-xs overflow-x-auto shadow-inner">
+                          <div className="flex justify-between items-center mb-2 border-b border-white/5 pb-2">
+                            <span className="text-slate-500 flex items-center gap-1"><Code className="w-3 h-3" /> PYTHON</span>
+                            <div className="flex gap-1">
+                              <div className="w-2 h-2 rounded-full bg-red-500/40" />
+                              <div className="w-2 h-2 rounded-full bg-yellow-500/40" />
+                              <div className="w-2 h-2 rounded-full bg-green-500/40" />
+                            </div>
+                          </div>
+                          <code className="text-green-400 block">{msg.code}</code>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-relaxed">{msg.content}</p>
+                    )}
+                  </div>
+                  <span className="text-[10px] text-slate-500 mt-1 px-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {msg.time}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
 
-      <SparkMatchmaker isOpen={isSparkOpen} onClose={() => setIsSparkOpen(false)} />
-    </>
+        {/* 输入框 */}
+        <div className="p-4 bg-slate-900/30 border-t border-white/5 backdrop-blur-lg">
+          <div className="flex items-center gap-3 bg-slate-800/50 p-2 rounded-xl border border-white/5 focus-within:border-purple-500/50 transition-colors">
+             <button className="p-2 hover:bg-white/5 rounded-lg text-slate-400 transition-colors">
+               <Paperclip className="w-5 h-5" />
+             </button>
+             <input 
+               type="text" 
+               placeholder="Transmit data..." 
+               className="flex-1 bg-transparent outline-none text-sm text-white placeholder:text-slate-600"
+               value={message}
+               onChange={(e) => setMessage(e.target.value)}
+             />
+             <button className="p-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg shadow-lg shadow-purple-900/20 transition-all active:scale-95">
+               <Send className="w-4 h-4" />
+             </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }
