@@ -4,61 +4,86 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%; /* 极深的灰，不是纯黑 */
-    --foreground: 0 0% 98%;
+    /* ☀️ Light Mode: 陶瓷白 + 极简灰 */
+    --background: 210 40% 98%; /* 极淡的灰白 */
+    --foreground: 222 47% 11%; /* 深蓝黑文字 */
     
-    /* 定义一套更亮的“极光色” */
-    --glow-purple: 270 100% 60%; 
-    --glow-blue: 220 100% 60%;
-    --glow-cyan: 190 100% 60%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 262 83% 58%; /* 鲜亮的紫色 */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+    
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222 47% 11%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 262 83% 58%;
+
+    --radius: 1.5rem; /* 更圆润的角 */
   }
 
+  .dark {
+    /* 🌙 Dark Mode: 黑曜石 + 极光 */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 263 70% 50%; /* 深邃紫 */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 263 70% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
   body {
-    @apply bg-black text-white antialiased selection:bg-blue-500/30 selection:text-white;
-    /* 核心：用径向渐变模拟环境光，解决“太暗”的问题 */
-    background: 
-      radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 40%), /* 左上微弱蓝光 */
-      radial-gradient(circle at 85% 30%, rgba(168, 85, 247, 0.08) 0%, transparent 40%), /* 右侧微弱紫光 */
-      #050505; /* 基底色，接近黑但不死黑 */
+    @apply bg-background text-foreground transition-colors duration-500; /* 全局颜色过渡动画 */
   }
 }
 
 @layer components {
-  /* 🌟 Apple 风格磨砂卡片：更亮、更通透 */
-  .bento-card {
-    @apply relative overflow-hidden rounded-[2rem] border border-white/15 transition-all duration-500;
-    /* 关键改动：背景使用 white/5 而不是 black/xx，提亮整体色调 */
-    background: rgba(255, 255, 255, 0.03); 
-    backdrop-filter: blur(24px); /* 高度模糊，像 Apple Vision Pro */
-    box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.2);
+  /* 🌟 通用玻璃卡片 (自动适配亮/暗) */
+  .glass-card {
+    @apply bg-background/60 backdrop-blur-xl border border-border shadow-sm transition-all duration-300;
   }
   
-  .bento-card:hover {
-    @apply border-white/25;
-    background: rgba(255, 255, 255, 0.06); /* Hover 时更亮 */
-    transform: translateY(-2px);
-    box-shadow: 0 20px 40px -4px rgba(0, 0, 0, 0.4); /* 浮起感 */
-  }
-
-  /* 标题文字：更亮 */
-  .text-title {
-    @apply font-semibold tracking-tight text-white drop-shadow-sm;
-  }
-  
-  /* 正文文字：从暗灰改为银灰 */
-  .text-body {
-    @apply text-slate-300 font-medium;
-  }
-
-  /* 极简滚动条 */
-  ::-webkit-scrollbar { width: 0px; }
-}
-
-@layer utilities {
-  .text-balance { text-wrap: balance; }
-  
-  /* 文字渐变：增加亮度 */
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-200 to-slate-400;
+  .glass-card:hover {
+    @apply bg-background/80 shadow-md transform -translate-y-[2px];
   }
 }
