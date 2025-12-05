@@ -16,7 +16,6 @@ export default function BottomNav() {
   const pathname = usePathname();
 
   return (
-    // 🟢 改动：bottom-6 (悬浮), rounded-full (胶囊), border (边框)
     <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
       <nav className="flex justify-between items-center bg-background/80 backdrop-blur-2xl border border-border rounded-full px-6 py-4 shadow-xl shadow-black/5">
         {navItems.map((item) => {
