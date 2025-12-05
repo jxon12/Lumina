@@ -2,7 +2,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
-// 1. 定义数据类型
 export interface Quest {
   id: number;
   title: string;
@@ -22,11 +21,10 @@ export interface UserState {
   name: string;
   xp: number;
   level: number;
-  activeQuests: number[]; // 存储 Quest ID
-  mentors: string[]; // 存储 Mentor ID
+  activeQuests: number[]; 
+  mentors: string[]; 
 }
 
-// 初始数据
 const INITIAL_USER: UserState = {
   name: "Alex Chen",
   xp: 12450,
@@ -35,7 +33,6 @@ const INITIAL_USER: UserState = {
   mentors: ['m1', 'm2']
 };
 
-// Context 类型定义
 interface GlobalContextType {
   user: UserState;
   addXp: (amount: number) => void;
@@ -48,7 +45,7 @@ const GlobalContext = createContext<GlobalContextType | null>(null);
 export function GlobalProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserState>(INITIAL_USER);
 
-  // 模拟从 LocalStorage 读取状态 (可选)
+
   useEffect(() => {
     const saved = localStorage.getItem('lumina_user_state');
     if (saved) {
@@ -60,7 +57,7 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // 状态变更时保存到 LocalStorage (可选)
+
   useEffect(() => {
     localStorage.setItem('lumina_user_state', JSON.stringify(user));
   }, [user]);
@@ -88,7 +85,6 @@ export function GlobalProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-// 自定义 Hook 方便调用
 export const useGlobalState = () => {
   const context = useContext(GlobalContext);
   if (!context) {
